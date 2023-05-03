@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/logo">
+        <file>res/PS.ico</file>
+    </qresource>
+    <qresource prefix="/qss">
+        <file>blacktheme.qss</file>
+    </qresource>
+    <qresource prefix="/wav">
+        <file>res/DingDong.wav</file>
+    </qresource>
+    <qresource prefix="/button">
+        <file>res/down.ico</file>
+        <file>res/up.ico</file>
+    </qresource>
+</RCC>

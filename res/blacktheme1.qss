@@ -1,0 +1,51 @@
+
+
+ConfigWindow QLineEdit:focus{
+
+border: 1.5px solid rgb(0,150,255);
+}
+
+ConfigWindow QSpinBox{
+color:white;
+background-color:rgb(97, 97,97);
+border-radius:6px;
+border: 1.5px solid white;
+}
+
+ConfigWindow QSpinBox:focus,QDateEdit:focus,QLineEdit:focus{
+
+border: 1.5px solid rgb(0,150,255);
+}
+
+ConfigWindow QDateEdit{
+color:white;
+background-color:rgb(97, 97,97);
+border-radius:6px;
+border: 1.5px solid white;
+}
+
+ConfigWindow QDateEdit:disabled,QSpinBox:disabled,QLineEdit:disabled{
+color:grey;
+
+border: 1.5px solid grey;
+}
+
+QPushButton:disabled{
+color:grey;
+border: 1.5px solid grey;
+}
+
+#Labtitle,Labtitle2{
+color:white;
+}
+#radioChinese{
+    color:white;}
+
+
+
+
+
+
+
+
+

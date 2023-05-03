@@ -1,0 +1,160 @@
+
+QPushButton
+{border-radius:10px;
+border: 1.5px solid white;
+background-color:rgb(97, 97,97);
+color:white;
+font-family:"Microsoft YaHei";
+}
+QPushButton::pressed
+{
+background-color:rgb(80,80, 80)
+}
+QPushButton::hover
+{
+border: 1.5px solid rgb(0,150,255);
+}
+#labTitle,#labDay,#lcdDay{
+    color:white;}
+
+
+    #btnMenu
+    {border-radius:5px;
+    border: 0px solid rgb(97, 97,97);
+    background-color:rgb(97, 97,97);
+    color:white;
+
+    }
+    #btnMenu::pressed
+    {
+    background-color:rgb(80,80, 80)
+    }
+    #btnMenu::hover
+    {
+    border: 0px solid rgb(0,150,255);
+    background-color:rgb(180,180, 180)
+    }
+
+   MainMenu QPushButton{
+   border-radius:5px;
+
+
+    border: 0px solid rgb(97, 97,97);
+    background-color:rgb(97, 97,97);
+
+    color:white;
+    }
+    #btnSetting::pressed
+    {
+    background-color:rgb(80,80, 80)
+    }
+    #btnSetting::hover
+    {
+
+
+    }
+
+
+
+
+#tabDisplay,#tabReport,#tabOthers
+{
+color:white;
+ border: 0px solid rgb(97, 97,97);
+
+}
+
+#tabDisplay::hover,#tabReport::hover,#tabOthers::hover
+{
+ border: 0px solid rgb(97, 97,97);
+color:rgb(0,150, 255)
+}
+
+
+
+ConfigWindow QLabel,AboutMe QLabel{
+color:white;
+
+
+}
+
+ConfigWindow QCheckBox{
+color:white;
+
+}
+
+QLineEdit{
+color:white;
+background-color:rgb(97, 97,97);
+border-radius:6px;
+border: 1.5px solid white;
+}
+
+
+
+
+ConfigWindow QLineEdit:focus{
+
+border: 1.5px solid rgb(0,150,255);
+}
+
+ConfigWindow QSpinBox,QTimeEdit{
+color:white;
+background-color:rgb(97, 97,97);
+border-radius:6px;
+border: 1.5px solid white;
+}
+
+ConfigWindow QSpinBox:focus,QDateEdit:focus,QLineEdit:focus,QTimeEdit:focus{
+
+border: 1.5px solid rgb(0,150,255);
+}
+
+ConfigWindow QDateEdit{
+color:white;
+background-color:rgb(97, 97,97);
+border-radius:6px;
+border: 1.5px solid white;
+}
+
+ConfigWindow QDateEdit:disabled,QSpinBox:disabled,QLineEdit:disabled,QTimeEdit:disabled{
+color:grey;
+
+border: 1.5px solid grey;
+}
+
+QPushButton:disabled{
+color:grey;
+border: 1.5px solid grey;
+}
+
+#Labtitle,#Labtitle2{
+color:white;
+}
+#radioChinese{
+    color:white;}
+
+QPlainTextEdit{
+
+background-color:rgb(97, 97,97);
+border-radius:6px;
+border: 1.5px solid white;
+color:white;
+}
+QTimeEdit::up-button{
+
+image:url(:/button/res/up.ico);
+}
+QTimeEdit::down-button,QDateEdit::down-button{
+
+image:url(:/button/res/down.ico);
+}
+
+
+
+
+
+
+
+
+
