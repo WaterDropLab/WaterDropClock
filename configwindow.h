@@ -10,6 +10,7 @@
 #include <QtTextToSpeech>
 #include <QVoice>
 #include <reportthread.h>
+#include <QPropertyAnimation>
 namespace Ui {
 class ConfigWindow;
 }
@@ -30,6 +31,7 @@ public:
     QVector<QVoice> m_voices;
     reportthread *report;
     QSoundEffect *sound;
+
 protected:
     void paintEvent(QPaintEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -110,6 +112,10 @@ private slots:
     void  startSpeak();
 
     void on_runChk_clicked(bool checked);
+
+    void on_runChk_2_clicked(bool checked);
+
+    void on_spnVolSys_valueChanged(int arg1);
 
 private:
     Ui::ConfigWindow *ui;

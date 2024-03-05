@@ -10,6 +10,17 @@
 #include <QTime>
 #include <QSystemTrayIcon>
 #include <reportthread.h>
+#include <QGraphicsBlurEffect>
+#include <QGraphicsPixmapItem>
+#include <QPaintEvent>
+#include <QPainter>
+
+
+
+#include <QDesktopWidget>
+#include <QEvent>
+#include <QPropertyAnimation>
+#include <qscreen.h>
 namespace Ui {
 class DisplayWindow;
 }
@@ -26,6 +37,8 @@ protected:
 public:
     explicit DisplayWindow(QWidget *parent = nullptr);
     ~DisplayWindow();
+    bool SetVolumeLevel(int level);
+    void  noMute();
 QSystemTrayIcon *tray;
     void iniSettings();
     QSettings set;
@@ -41,6 +54,7 @@ QSystemTrayIcon *tray;
     bool sysLogout();
     bool sysLogoutForce();
     QString lastTime;
+     QPropertyAnimation *m_animation;
 
 public slots:
 void active(QSystemTrayIcon::ActivationReason r);
@@ -68,6 +82,8 @@ private slots:
 
 private:
     Ui::DisplayWindow *ui;
+    QColor bgColor;
+    bool isBlur;
     bool    m_moving=false;//表示窗口是否在鼠标操作下移动
 
 };

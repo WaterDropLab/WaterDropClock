@@ -8,7 +8,64 @@
 #include <reportthread.h>
 #include <QSystemTrayIcon>
 #include <QMenu>
-#include <windows.h>
+#include <Windows.h>
+#include <mmdeviceapi.h>
+#include <endpointvolume.h>
+#include <audioclient.h>
+#include <winuser.h>
+//#include <combaseapi.h>
+//#include <ks.h>
+#include <QAxBase>
+enum AccentState
+{
+        ACCENT_DISABLED = 0,
+        ACCENT_ENABLE_GRADIENT = 1,
+        ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
+        ACCENT_ENABLE_BLURBEHIND = 3,
+        ACCENT_INVALID_STATE = 4
+};
+struct AccentPolicy
+{
+        AccentState AccentState;
+        int AccentFlags;
+        int GradientColor;
+        int AnimationId;
+};
+enum WindowCompositionAttribute
+{
+        WCA_UNDEFINED = 0,
+        WCA_NCRENDERING_ENABLED = 1,
+        WCA_NCRENDERING_POLICY = 2,
+        WCA_TRANSITIONS_FORCEDISABLED = 3,
+        WCA_ALLOW_NCPAINT = 4,
+        WCA_CAPTION_BUTTON_BOUNDS = 5,
+        WCA_NONCLIENT_RTL_LAYOUT = 6,
+        WCA_FORCE_ICONIC_REPRESENTATION = 7,
+        WCA_EXTENDED_FRAME_BOUNDS = 8,
+        WCA_HAS_ICONIC_BITMAP = 9,
+        WCA_THEME_ATTRIBUTES = 10,
+        WCA_NCRENDERING_EXILED = 11,
+        WCA_NCADORNMENTINFO = 12,
+        WCA_EXCLUDED_FROM_LIVEPREVIEW = 13,
+        WCA_VIDEO_OVERLAY_ACTIVE = 14,
+        WCA_FORCE_ACTIVEWINDOW_APPEARANCE = 15,
+        WCA_DISALLOW_PEEK = 16,
+        WCA_CLOAK = 17,
+        WCA_CLOAKED = 18,
+        WCA_ACCENT_POLICY = 19,
+        WCA_FREEZE_REPRESENTATION = 20,
+        WCA_EVER_UNCLOAKED = 21,
+        WCA_VISUAL_OWNER = 22,
+        WCA_LAST = 23
+};
+struct WindowCompositionAttributeData
+{
+        WindowCompositionAttribute Attribute;
+        int * Data;
+        int SizeOfData;
+};
+
+typedef int* (*pfun)(HWND hwnd, WindowCompositionAttributeData *data);
 DisplayWindow::DisplayWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DisplayWindow)
@@ -37,9 +94,15 @@ tmReport->start(600);
     tray->show();
     connect(tray,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(active(QSystemTrayIcon::ActivationReason)));
    tray->showMessage("水滴时钟","你好。很高兴见到你。水滴时钟正在运行。",QIcon(":/logo/res/PS.ico"),10000);
+   m_animation = new QPropertyAnimation();
+      m_animation->setTargetObject(ui->mainframe);    //设置使用动画的控件
+      m_animation->setEasingCurve(QEasingCurve::Linear);
 
-
-
+      m_animation->setPropertyName("pos");    //指定动画属性名
+          m_animation->setDuration(500);    //设置动画时间（单位：毫秒）
+          m_animation->setStartValue(QPoint(-391,0));  //设置动画起始位置在label控件当前的pos
+          m_animation->setEndValue( QPoint(0,0)); //设置动画结束位置
+          m_animation->start();
 
 
 
@@ -50,6 +113,20 @@ tmReport->start(600);
 
 void ME::paintEvent(QPaintEvent *event)
 {
+    if(isBlur)
+    {
+        static bool v = false;
+        if (v) return;
+
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(bgColor);
+        painter.drawRoundedRect(rect(), 0, 0);
+        v = true;
+        //painter.fillRect(ui.frame->rect(), bgColor);
+    }
+    else{
     QPainter painter(this);
 
     QColor color;
@@ -63,6 +140,7 @@ void ME::paintEvent(QPaintEvent *event)
     painter.setPen(Qt::transparent);
        // 绘制方式1
        painter.drawRoundedRect(rect,10,10);
+    }
 
 }
 
@@ -109,6 +187,66 @@ void DisplayWindow::mouseReleaseEvent(QMouseEvent *event)
 DisplayWindow::~DisplayWindow()
 {
     delete ui;
+}
+
+bool DisplayWindow::SetVolumeLevel(int level)
+{
+    HRESULT hr;
+    IMMDeviceEnumerator* pDeviceEnumerator = 0;
+    IMMDevice* pDevice = 0;
+    IAudioEndpointVolume* pAudioEndpointVolume = 0;
+    IAudioClient* pAudioClient = 0;
+
+    try {
+        hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&pDeviceEnumerator);
+        if (FAILED(hr)) throw "CoCreateInstance";
+        hr = pDeviceEnumerator->GetDefaultAudioEndpoint(eRender, eMultimedia, &pDevice);
+        if (FAILED(hr)) throw "GetDefaultAudioEndpoint";
+        hr = pDevice->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_ALL, NULL, (void**)&pAudioEndpointVolume);
+        if (FAILED(hr)) throw "pDevice->Active";
+        hr = pDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, (void**)&pAudioClient);
+        if (FAILED(hr)) throw "pDevice->Active";
+
+        if (level == -2) {
+            hr = pAudioEndpointVolume->SetMute(FALSE, NULL);
+            if (FAILED(hr)) throw "SetMute";
+        }
+        else if (level == -1) {
+            hr = pAudioEndpointVolume->SetMute(TRUE, NULL);
+            if (FAILED(hr)) throw "SetMute";
+        }
+        else {
+            if (level<0 || level>100) {
+                hr = E_INVALIDARG;
+                throw "Invalid Arg";
+            }
+
+            float fVolume;
+            fVolume = level / 100.0f;
+            hr = pAudioEndpointVolume->SetMasterVolumeLevelScalar(fVolume, &GUID_NULL);
+            if (FAILED(hr)) throw "SetMasterVolumeLevelScalar";
+            hr = pAudioEndpointVolume->SetMute(FALSE, NULL);
+            pAudioClient->Release();
+            pAudioEndpointVolume->Release();
+            pDevice->Release();
+            pDeviceEnumerator->Release();
+            return true;
+        }
+    }
+    catch (...) {
+        if (pAudioClient) pAudioClient->Release();
+        if (pAudioEndpointVolume) pAudioEndpointVolume->Release();
+        if (pDevice) pDevice->Release();
+        if (pDeviceEnumerator) pDeviceEnumerator->Release();
+        throw;
+    }
+    return false;
+}
+
+void DisplayWindow::noMute()
+{
+   SendMessage(HWND_BROADCAST, WM_APPCOMMAND, 0x200eb0, APPCOMMAND_VOLUME_MUTE *0x10000);
+
 }
 
 void DisplayWindow::iniSettings()
@@ -169,7 +307,35 @@ void DisplayWindow::iniSettings()
         ui->lcdDay->setVisible(0);
         ui->labDay->setVisible(0);
     }
+    if(settings->value("Display/isBlur",0).toBool()){
+        isBlur=1;
+        HWND hWnd = HWND(winId());
+        HMODULE hUser = GetModuleHandle(L"user32.dll");
 
+        if (hUser) {
+            pfun setWindowCompositionAttribute = (pfun)GetProcAddress(hUser, "SetWindowCompositionAttribute");
+            if (setWindowCompositionAttribute) {
+    //            AccentPolicy accent = { ACCENT_ENABLE_BLURBEHIND, 0x20 | 0x40 | 0x80 | 0x100, 0, 0 };
+                AccentPolicy accent = { ACCENT_ENABLE_BLURBEHIND,0, 0, 0 };
+                WindowCompositionAttributeData data;
+                data.Attribute = WCA_ACCENT_POLICY;
+                data.Data = reinterpret_cast<int *>(&accent) ;
+                data.SizeOfData = sizeof(accent);
+                setWindowCompositionAttribute(hWnd, &data);
+            }
+        }
+        this->setAttribute(Qt::WA_TranslucentBackground);//设置窗口背景透明
+    //    setWindowOpacity(1);
+        setWindowTitle(QString(""));
+        ui->btnMenu->setStyleSheet("#btnMenu{border-radius:5px;border: 0px solid rgb(0,0,0); background: transparent; color:rgb(255,255,255);}");
+
+
+        //
+        bgColor = QColor(255, 255, 255, 100);
+    }
+    else {
+        isBlur=0;
+    }
     delete  settings;
 
 }
@@ -295,6 +461,12 @@ void DisplayWindow::on_tmReport_timout()
      QSettings *reg=new QSettings("WaterDropLab","WaterDropClock");
      if(reg->value("Report/Enabled",1).toBool() && reg->value("Report/Time","07:30:00")==QTime::currentTime().toString("HH:mm:ss") && (QTime::currentTime().toString("HH:mm:ss") !=lastTime))
      {
+          QSettings *settings=new QSettings("WaterDropLab","WaterDropClock");
+         if(settings->value("Report/ForceRegulateSystemVolume",0).toBool()){
+
+             SetVolumeLevel(settings->value("Report/SystemVolume",50).toInt());
+         }
+         delete settings;
           tray->showMessage("水滴时钟","水滴时钟正在进行今日播报。",QIcon(":/logo/res/PS.ico"),10000);
          QSound::play(":/wav/res/DingDong.wav");
          report->start(QThread::HighestPriority);

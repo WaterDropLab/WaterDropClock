@@ -32,7 +32,23 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     iniSettings();
     on_tabDisplay_clicked();
     ui->tabDisplay->setFocus();
-}
+    //设置动画效果
+/*
+    QPropertyAnimation *hoverAnimation=new QPropertyAnimation(ui->test, "geometry");
+       hoverAnimation->setDuration(200);
+       hoverAnimation->setStartValue(ui->btnEdit1->geometry());
+       hoverAnimation->setEndValue(ui->test->geometry().adjusted(-10, -10, 10, 10));
+
+       QPropertyAnimation *pressAnimation=new QPropertyAnimation(ui->test, "geometry");
+       pressAnimation->setDuration(100);
+       pressAnimation->setStartValue(hoverAnimation->endValue());
+       pressAnimation->setEndValue(hoverAnimation->startValue());
+
+       QSequentialAnimationGroup *buttonAnimation=new QSequentialAnimationGroup;
+       buttonAnimation->addAnimation(hoverAnimation);
+       buttonAnimation->addAnimation(pressAnimation);
+*/
+      }
 
 ConfigWindow::~ConfigWindow()
 {
@@ -139,6 +155,10 @@ void ConfigWindow::iniSettings()
     }
 //对于播报
     m_speech=new QTextToSpeech;
+    ui->runChk_2->setChecked(settings->value("Report/ForceRegulateSystemVolume",0).toBool());
+    ui->spnVolSys->setEnabled(settings->value("Report/ForceRegulateSystemVolume",0).toBool());
+    ui->spnVolSys->setValue(settings->value("Report/SystemVolume",50).toInt());
+
     ui->sliVol->setValue(settings->value("Report/Volume",10).toInt());
     ui->sliRate->setValue(settings->value("Report/Rate",0).toInt());
     QTime time=time.fromString(settings->value("Report/Time","07:30:00").toString(),"HH:mm:ss");
@@ -146,6 +166,7 @@ void ConfigWindow::iniSettings()
     if (settings->value("Report/Enabled",1).toBool())
     {
         on_rechk_clicked(1);
+
         ui->rechk->setChecked(1);
 
     }
@@ -717,4 +738,17 @@ void ConfigWindow::on_runChk_clicked(bool checked)
         settings->setValue("Autorun",0);
         run.setValue("CurrentVersion/Run/水滴时钟","");
     }
+}
+
+void ConfigWindow::on_runChk_2_clicked(bool checked)
+{
+
+        ui->spnVolSys->setEnabled(checked);
+        settings->setValue("Report/ForceRegulateSystemVolume",checked);
+
+}
+
+void ConfigWindow::on_spnVolSys_valueChanged(int arg1)
+{
+    settings->setValue("Report/SystemVolume",arg1);
 }

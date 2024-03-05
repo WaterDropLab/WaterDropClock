@@ -1,6 +1,7 @@
 QT       += core gui
 QT       +=texttospeech
 QT       +=multimedia
+QT       += axcontainer
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -70,7 +71,7 @@ RESOURCES += \
     res.qrc
 RC_ICONS=PS.ico
 
-VERSION = 1.0.1
+VERSION = 1.0.3
 
 RC_LANG = 0x004
 
