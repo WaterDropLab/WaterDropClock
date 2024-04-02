@@ -40,12 +40,12 @@ void reportthread::run()
     bool a=0;
     int days1=QDate::currentDate().daysTo(dateTarget1);
     int days2=QDate::currentDate().daysTo(dateTarget2);
-    if(days1>=0 && settings->value("Report/Section1/Enabled",1).toBool())
+    if(days1>0 && settings->value("Report/Section1/Enabled",1).toBool())
     {
         content1="距离"+title1+"仅有，"+QString::number(days1)+"天，";
         a=1;
     }
-    if(days2>=0 && settings->value("Report/Section2/Enabled",1).toBool())
+    if(days2>0 && settings->value("Report/Section2/Enabled",1).toBool())
     {
         content2="距离"+title2+"仅有，"+QString::number(days2)+"天。";
         a=1;

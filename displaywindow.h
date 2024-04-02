@@ -1,3 +1,6 @@
+#if _MSC_VER >=1600
+#pragma execution_character_set("utf-8")
+#endif
 #ifndef DISPLAYWINDOW_H
 #define DISPLAYWINDOW_H
 #define ME DisplayWindow

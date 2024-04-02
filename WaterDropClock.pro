@@ -22,9 +22,6 @@ SOURCES += \
     configwindow.cpp \
     displaywindow.cpp \
     fontselecterdialog.cpp \
-    frmdisplay.cpp \
-    frmothers.cpp \
-    frmreport.cpp \
     main.cpp \
     mainmenu.cpp \
     parfontselector.cpp \
@@ -36,9 +33,6 @@ HEADERS += \
     configwindow.h \
     displaywindow.h \
     fontselecterdialog.h \
-    frmdisplay.h \
-    frmothers.h \
-    frmreport.h \
     mainmenu.h \
     parfontselector.h \
     reportthread.h \
@@ -49,9 +43,6 @@ FORMS += \
     configwindow.ui \
     displaywindow.ui \
     fontselecterdialog.ui \
-    frmdisplay.ui \
-    frmothers.ui \
-    frmreport.ui \
     mainmenu.ui \
     parfontselector.ui \
     startwindow.ui

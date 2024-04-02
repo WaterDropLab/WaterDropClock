@@ -5,6 +5,7 @@ border: 1.5px solid white;
 background-color:rgb(97, 97,97);
 color:white;
 font-family:"Microsoft YaHei";
+
 }
 QPushButton::pressed
 {
